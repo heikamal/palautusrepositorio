@@ -18,18 +18,28 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
-  const handler = () => {
+  const [selected, setSelected] = useState(0)
+
+  const [points, setPoints] = useState(new Uint8Array(10))
+
+  const nextHandler = () => {
     const newSelected = Math.floor(Math.random() * anecdotes.length)
     console.log(newSelected)
     setSelected(newSelected)
   }
-   
-  const [selected, setSelected] = useState(0)
+
+  const voteHandler = () => {
+    const copy = [ ...points ]
+    copy[selected] += 1
+    setPoints(copy)
+  }
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <Button handler={handler} text="next anecdote" />
+      <p>{anecdotes[selected]}<br />
+      has {points[selected]} points</p>
+      <Button handler={voteHandler} text="vote" />
+      <Button handler={nextHandler} text="next anecdote" />
     </div>
   )
 }
