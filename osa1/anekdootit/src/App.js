@@ -22,6 +22,8 @@ const App = () => {
 
   const [points, setPoints] = useState(new Uint8Array(10))
 
+  let top = points.indexOf(Math.max(...points))
+
   const nextHandler = () => {
     const newSelected = Math.floor(Math.random() * anecdotes.length)
     console.log(newSelected)
@@ -36,10 +38,15 @@ const App = () => {
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <p>{anecdotes[selected]}<br />
-      has {points[selected]} points</p>
+      has {points[selected]} votes</p>
       <Button handler={voteHandler} text="vote" />
       <Button handler={nextHandler} text="next anecdote" />
+
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdotes[top]}<br />
+      has {points[top]} votes</p>
     </div>
   )
 }
