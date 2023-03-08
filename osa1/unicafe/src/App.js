@@ -6,6 +6,12 @@ const Statistics = (props) => {
   const bad = props.bad
   const sum = good+neutral+bad
 
+  if (sum === 0) {
+    return (
+      <p>No feedback given</p>
+    )
+  }
+
   return (
     <p>good {good}<br />
       neutral {neutral}<br />
