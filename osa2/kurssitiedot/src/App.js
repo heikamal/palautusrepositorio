@@ -4,7 +4,7 @@ const Course = ({ course }) => {
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
-      {/*<Total parts={course.parts} />*/}
+      <Total parts={course.parts} />
     </div>
   )
 }
@@ -25,11 +25,19 @@ const Content = ({ parts }) => {
   )
 }
 
-{/*
-const Total = (props) => {
-  console.log(props)
-  return <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
-}*/}
+const Total = ({ parts }) => {
+  // muodosta uusi taulukko tehtävien lukumäärästä
+  const exercises = parts.map(part => part.exercises)
+  console.log(exercises)
+  
+  // laske taulukko yhteen reduce-funktiolla
+  const initialValue = 0
+  const total = exercises.reduce( (accumulator, currentValue) => accumulator + currentValue, initialValue)
+
+  return (
+    <p><b>total of {total} exercises</b></p>
+  )
+}
 
 const Part = (props) => {
   return (
