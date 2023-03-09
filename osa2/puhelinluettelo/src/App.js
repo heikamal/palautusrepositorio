@@ -14,13 +14,23 @@ const App = () => {
 
   //lisää tapahtumankäsittelijä nimen lisäämiselle
   const addPerson = (event) => {
-    // laita lisäämään nimi taulukkoon
     event.preventDefault()
+
+    // hae syöte taulukosta, jos ei löydy niin lisää annettu syöte
+    if (persons.find(person => person.name === newName)) {
+      console.log('uh-oh!')
+      alert(`${newName} is already added to phonebook`)
+      setNewName('')
+      return
+    }
+
+    // lisää nimi taulukkoon
     const personObject = {
       name: newName
     }
-
     setPersons(persons.concat(personObject))
+    console.log('lisätty!')
+
     setNewName('')
     console.log('button clicked', event.target)
   }
