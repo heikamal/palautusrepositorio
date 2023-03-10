@@ -4,6 +4,30 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="notification">
+      {message}
+    </div>
+  )
+}
+
+const Error = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -11,6 +35,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   //filtteri
   const [filter, setFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const peopleToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
   // hae alkutila palvelimelta effect hookilla
@@ -44,6 +70,22 @@ const App = () => {
 
         peopleService.updateNumber(personA.id, changedPerson).then(returnedPerson => {
           setPersons(persons.map(person => person.id !== personA.id ? person : returnedPerson))
+          setNotificationMessage(
+            `${newName} updated`
+          )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
+      })
+      .catch(error => {
+        setErrorMessage(
+          `Information of ${newName} has already been removed from the server`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+
+        setPersons(persons.filter(n => n.name !== newName))
       })
       }
 
@@ -63,6 +105,13 @@ const App = () => {
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
 
+        setNotificationMessage(
+          `${newName} added`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+
         setNewName('')
         setNewNumber('')
       })
@@ -75,6 +124,13 @@ const App = () => {
       peopleService.delPerson(id)
       setPersons(persons.filter(n => n.id !== id))
     }
+
+    setNotificationMessage(
+      `${name} deleted`
+    )
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
   }
 
   // tapahtumankäsittelijät syötekomponenttien muutoksille
@@ -91,6 +147,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
+      <Error message={errorMessage} />
       <Filter
       filter={filter}
       handleFilterChange={handleFilterChange}
