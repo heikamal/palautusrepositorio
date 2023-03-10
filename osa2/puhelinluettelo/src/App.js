@@ -60,6 +60,14 @@ const App = () => {
     
   }
 
+  // tapahtumankäsittelijä poistopainikkeelle
+  const deleteHandle = (name, id) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      peopleService.delPerson(id)
+      setPersons(persons.filter(n => n.id !== id))
+    }
+  }
+
   // tapahtumankäsittelijät syötekomponenttien muutoksille
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -87,7 +95,7 @@ const App = () => {
       handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons peopleToShow={peopleToShow}/>
+      <Persons peopleToShow={peopleToShow} deleteHandle={deleteHandle} />
     </div>
   )
 
