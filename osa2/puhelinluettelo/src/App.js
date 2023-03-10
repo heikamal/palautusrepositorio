@@ -37,7 +37,16 @@ const App = () => {
 
     // hae syöte taulukosta, jos ei löydy niin lisää annettu syöte
     if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      // jos löytyy, muuta numero
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const personA = persons.find(n => n.name === newName)
+        const changedPerson = {...personA, number: newNumber}
+
+        peopleService.updateNumber(personA.id, changedPerson).then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== personA.id ? person : returnedPerson))
+      })
+      }
+
       setNewName('')
       setNewNumber('')
       return
