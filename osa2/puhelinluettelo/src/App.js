@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import peopleService from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -15,11 +15,11 @@ const App = () => {
 
   // hae alkutila palvelimelta effect hookilla
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
-    })
+    peopleService
+      .getAll()
+        .then(initialPeople => {
+          setPersons(initialPeople)
+        })
   }, [])
 
   //lisää tapahtumankäsittelijä nimen lisäämiselle
@@ -48,10 +48,16 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    setPersons(persons.concat(personObject))
 
-    setNewName('')
-    setNewNumber('')
+    peopleService
+    .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+
+        setNewName('')
+        setNewNumber('')
+      })
+    
   }
 
   // tapahtumankäsittelijät syötekomponenttien muutoksille
