@@ -1,7 +1,8 @@
 import CountryName from "./CountryName"
 import Country from "./Country"
 
-const CountriesDisplay = ({ countries }) => {
+const CountriesDisplay = (props) => {
+    const countries = props.countries
     if (countries.length === 1){
         return (
             <Country country={countries[0]} />
@@ -18,7 +19,7 @@ const CountriesDisplay = ({ countries }) => {
     return (
         <div>
             <ul>
-                {countries.map(country => <CountryName key={country.name.common} country={country} />)}
+                {countries.map(country => <CountryName key={country.name.common} country={country} buttonClickHandler={props.buttonClickHandler} />)}
             </ul>
         </div>
     )

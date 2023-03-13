@@ -23,10 +23,14 @@ const App = () => {
     setShowCountries(countries.filter(country => country.name.common.includes(searchCountry)))
   }
 
+  const handleCountryShow = (event) => {
+    setShowCountries(countries.filter(country => country.name.common === event.target.value))
+  }
+
   return (
     <div>
       <p>find countries <input value={searchCountry} onChange={handleCountryChange} /></p>
-      <CountriesDisplay countries={showCountries}/>
+      <CountriesDisplay countries={showCountries} buttonClickHandler={handleCountryShow} />
     </div>
   )
 }
