@@ -1,5 +1,10 @@
-import CountryName from "./CountryName"
 import Country from "./Country"
+
+const CountryName = ({ country, buttonClickHandler }) => {
+    return (
+        <li>{country.name.common}<button onClick={buttonClickHandler} value={country.name.common}>show</button></li>
+    )
+}
 
 const CountriesDisplay = (props) => {
     const countries = props.countries
