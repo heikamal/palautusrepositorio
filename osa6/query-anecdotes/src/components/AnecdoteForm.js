@@ -3,10 +3,15 @@ import { createAnecdote } from "../requests"
 
 const AnecdoteForm = ({ setNoti }) => {
   const queryClient = useQueryClient()
+
   const newAnecdoteMutation = useMutation(createAnecdote, {
+    onError: (error) => {
+      setNoti(error.response.data.error)
+    },
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData('anecdotes')
       queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote))
+      setNoti(`'${newAnecdote.content}' added`)
     }
   })
 
@@ -15,13 +20,7 @@ const AnecdoteForm = ({ setNoti }) => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     console.log('new anecdote')
-    try {
-      await newAnecdoteMutation.mutateAsync({ content, votes: 0 })
-    } catch (error) {
-      setNoti(`too short`)
-    } finally {
-      setNoti(`${content} added`)
-    }
+    newAnecdoteMutation.mutateAsync({ content, votes: 0 })
   }
 
   return (
