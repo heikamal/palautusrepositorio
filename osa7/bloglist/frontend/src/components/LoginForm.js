@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
-import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 import { showError } from '../reducers/errorReducer'
+import { logUserIn, setUser } from '../reducers/userReducer'
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
 	const dispatch = useDispatch()
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
@@ -16,15 +16,7 @@ const LoginForm = ({ setUser }) => {
 		console.log('logging in with', username, password)
 
 		try {
-			const user = await loginService.login({
-				username,
-				password,
-			})
-
-			window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
-
-			blogService.setToken(user.token)
-			setUser(user)
+			dispatch(logUserIn({ username, password }))
 			setUsername('')
 			setPassword('')
 		} catch (exception) {
@@ -64,10 +56,6 @@ const LoginForm = ({ setUser }) => {
 			</form>
 		</div>
 	)
-}
-
-LoginForm.propTypes = {
-	setUser: PropTypes.func.isRequired,
 }
 
 export default LoginForm

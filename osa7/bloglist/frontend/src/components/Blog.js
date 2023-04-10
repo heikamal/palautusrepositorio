@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import TogglableButton from './TogglableButton'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
-const Blog = ({ user, blog, updateLikes, handleRemoveButton }) => {
+const Blog = ({ blog, updateLikes, handleRemoveButton }) => {
+	const user = useSelector(state => {
+		return state.user
+	})
 	const [blogInfoVisible, setBlogInfoVisible] = useState(false)
 	const showWhenVisible = { display: blogInfoVisible ? '' : 'none' }
 

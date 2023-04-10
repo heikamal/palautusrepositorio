@@ -6,9 +6,14 @@ import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from '../reducers/notificationReducer'
 import { addVote, createBlog, removeBlog, setBlogs } from '../reducers/blogReducer'
+import { logUserOut } from '../reducers/userReducer'
 
-const BlogDisplay = ({ user, handleLogout }) => {
+const BlogDisplay = () => {
 	const dispatch = useDispatch()
+
+	const user = useSelector(state => {
+		return state.user
+	})
 
 	// haetut blogit
 	const blogs = useSelector(state => {
@@ -24,7 +29,6 @@ const BlogDisplay = ({ user, handleLogout }) => {
 		setFormVisible(false)
 		showNotification(dispatch, `a new blog ${newBlog.title} by ${newBlog.author} added`)
 	}
-
 
 	const sortBlogs = []
 		.concat(blogs)
@@ -50,6 +54,13 @@ const BlogDisplay = ({ user, handleLogout }) => {
 			dispatch(removeBlog(blog.id))
 			showNotification(dispatch, `${blog.title} removed`)
 		}
+	}
+
+	// logoutin handleri
+	const handleLogout = (event) => {
+		event.preventDefault()
+		console.log('logging out')
+		dispatch(logUserOut())
 	}
 
 	return (
@@ -78,9 +89,5 @@ const BlogDisplay = ({ user, handleLogout }) => {
 	)
 }
 
-BlogDisplay.propTypes = {
-	user: PropTypes.object.isRequired,
-	handleLogout: PropTypes.func.isRequired,
-}
 
 export default BlogDisplay

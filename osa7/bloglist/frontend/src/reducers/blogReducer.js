@@ -41,7 +41,7 @@ export const initializeBlogs = () => {
 export const createBlog = (newBlog, user) => {
   return async dispatch => {
     const returned = await blogService.createNew(newBlog)
-	const freshBlog = {...returned, user: user}
+	  const freshBlog = {...returned, user: user}
     dispatch(appendBlog(freshBlog))
   }
 }

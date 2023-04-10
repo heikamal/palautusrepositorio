@@ -4,8 +4,9 @@ import LoginForm from './components/LoginForm'
 import BlogDisplay from './components/BlogDisplay'
 import Error from './components/Error'
 import Notification from './components/Notification'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { clearUser, logUserOut, setUser } from './reducers/userReducer'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -16,25 +17,27 @@ const App = () => {
 	}, [dispatch])
 
 	//kirjautuminen
-	const [user, setUser] = useState(null)
+	const user = useSelector(state => {
+		return state.user
+	})
 
 	// haetaan kirjautunut käyttäjä jos sellaista on
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
+			dispatch(setUser(user))
 			blogService.setToken(user.token)
 		}
 	}, [])
+
+	
 
 	// logoutin handleri
 	const handleLogout = (event) => {
 		event.preventDefault()
 		console.log('logging out')
-		window.localStorage.removeItem('loggedBloglistUser')
-		setUser(null)
-		blogService.setToken(null)
+		dispatch(logUserOut())
 	}
 
 	return (
@@ -43,12 +46,12 @@ const App = () => {
 			<Notification />
 			{!user && (
 				<div>
-					<LoginForm setUser={setUser} />
+					<LoginForm />
 				</div>
 			)}
 			{user && (
 				<div>
-					<BlogDisplay user={user} handleLogout={handleLogout} />
+					<BlogDisplay handleLogout={handleLogout} />
 				</div>
 			)}
 		</div>
