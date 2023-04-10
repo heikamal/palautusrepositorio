@@ -1,26 +1,19 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, useParams, useNavigate
 } from 'react-router-dom'
 
-const Menu = ({ anecdotes, addNew }) => {
+const Menu = () => {
   const padding = {
     paddingRight: 5
   }
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/">anecdotes</Link>
-        <Link style={padding} to="/create">create new</Link>
-        <Link style={padding} to="/about">about</Link>
-      </div>
-      <Routes>
-        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path='/create' element={<CreateNew addNew={addNew} />} />
-        <Route path='/about' element={<About />} />
-      </Routes>
-    </Router>
+    <div>
+      <Link style={padding} to="/">anecdotes</Link>
+      <Link style={padding} to="/create">create new</Link>
+      <Link style={padding} to="/about">about</Link>
+    </div>
   )
 }
 
@@ -28,10 +21,45 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => 
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+          </li>
+      )}
     </ul>
   </div>
 )
+
+// yksittäisen anekdootin tietoja varten oma componenttinsa
+const Anecdote = ({ anecdotes }) => {
+  const id = useParams().id
+  const anecdote = anecdotes.find(a => a.id === Number(id))
+
+  return (
+    <div>
+      <h2>{anecdote.content} by {anecdote.author}</h2>
+      <p>has {anecdote.votes} votes</p>
+      <p>for more info see <a href={anecdote.info}>{anecdote.info}</a></p>
+    </div>
+  )
+}
+
+const Notification = ({ message }) => {
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+    marginBottom: 5
+  }
+  
+  if (message === null) return null
+
+  return (
+    <div style={style}>
+      {message}
+    </div>
+  )
+}
 
 const About = () => (
   <div>
@@ -59,6 +87,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
+  const navigate = useNavigate()
 
 
   const handleSubmit = (e) => {
@@ -69,6 +98,14 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+
+    // aseta notifikaatio ja ohjaa takaisin anekdootti-näkymään
+    props.notify(`a new anecdote ${content} created!`)
+    // aseta muuttujat tyhjiksi, varmuuden vuoksi
+    setContent('')
+    setAuthor('')
+    setInfo('')
+    navigate('/')
   }
 
   return (
@@ -112,7 +149,7 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState(null)
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
@@ -133,13 +170,26 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
+  // funktio joka asettaa ilmoitusviestin ja poistaa sen viiden sekunnin päästä
+  const notify = (message) => {
+    setNotification(message)
+    setTimeout(() => setNotification(null), 5000)
+  } 
+
+  // Määritellään router ja sen routet päänäkymässä, mutta linkit itsessään vasta alempana
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu 
-      anecdotes={anecdotes}
-      addNew={addNew}
-      />
+      <Router>
+        <Menu />
+        <Notification message={notification}/>
+        <Routes>
+        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path='/create' element={<CreateNew addNew={addNew} notify={notify} />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/anecdotes/:id' element={<Anecdote anecdotes={anecdotes} />} />
+      </Routes>
+      </Router>
       <Footer />
     </div>
   )
