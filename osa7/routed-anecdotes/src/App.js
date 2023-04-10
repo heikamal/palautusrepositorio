@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   Routes, Route, Link, useParams, useNavigate, useMatch
 } from 'react-router-dom'
+import  { useField } from './hooks'
 
 const Menu = () => {
   const padding = {
@@ -80,47 +81,49 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
   const navigate = useNavigate()
+
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
 
     // aseta notifikaatio ja ohjaa takaisin anekdootti-näkymään
-    props.notify(`a new anecdote ${content} created!`)
-    // aseta muuttujat tyhjiksi, varmuuden vuoksi
-    setContent('')
-    setAuthor('')
-    setInfo('')
+    props.notify(`a new anecdote ${content.value} created!`)
     navigate('/')
+  }
+
+  // funktio resetoimaan kaikki muuttujat ja sitä myöten kentät
+  const handleReset = (event) => {
+    event.preventDefault()
+    content.onReset()
+    author.onReset()
+    info.onReset()
   }
 
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
-        </div>
-        <div>
-          author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
-        </div>
-        <div>
-          url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
-        </div>
-        <button>create</button>
+      <form id='create-anecdote-form' onSubmit={handleSubmit} onReset={handleReset}>
+        content
+        <input {...content} />
+        <br/>
+        author
+        <input {...author} />
+        <br/>
+        url for more info
+        <input {...info} />
+        <br/>
+        <button type='submit'name='submitButton'>create</button> <button type='reset' name='cancelButton'>cancel</button>
       </form>
     </div>
   )
