@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
-  BrowserRouter as Router,
-  Routes, Route, Link, useParams, useNavigate
+  Routes, Route, Link, useParams, useNavigate, useMatch
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -31,10 +30,7 @@ const AnecdoteList = ({ anecdotes }) => (
 )
 
 // yksittäisen anekdootin tietoja varten oma componenttinsa
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id
-  const anecdote = anecdotes.find(a => a.id === Number(id))
-
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>{anecdote.content} by {anecdote.author}</h2>
@@ -176,20 +172,24 @@ const App = () => {
     setTimeout(() => setNotification(null), 5000)
   } 
 
+  // jos katsotaan yksittäistä anekdoottia, haetaan se id:n avulla jotta voidaan toimittaa parametreina komponentille
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
+
   // Määritellään router ja sen routet päänäkymässä, mutta linkit itsessään vasta alempana
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Router>
-        <Menu />
-        <Notification message={notification}/>
-        <Routes>
-        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path='/create' element={<CreateNew addNew={addNew} notify={notify} />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/anecdotes/:id' element={<Anecdote anecdotes={anecdotes} />} />
+      <Menu />
+      <Notification message={notification}/>
+      <Routes>
+      <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
+      <Route path='/create' element={<CreateNew addNew={addNew} notify={notify} />} />
+      <Route path='/about' element={<About />} />
+      <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdote} />} />
       </Routes>
-      </Router>
       <Footer />
     </div>
   )
