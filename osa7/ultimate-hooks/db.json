@@ -1,0 +1,38 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom hooks are awesome"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "added something to clear the field",
+      "id": 3
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "Matti Luukkainen",
+      "number": "040-12344565"
+    },
+    {
+      "id": 2,
+      "name": "Tarja Halonen",
+      "number": "040-2223334"
+    },
+    {
+      "name": "Heikki Malkavaara",
+      "number": "050-9872345",
+      "id": 3
+    },
+    {
+      "name": "Hagrid",
+      "number": "045-3743261",
+      "id": 4
+    }
+  ]
+}
