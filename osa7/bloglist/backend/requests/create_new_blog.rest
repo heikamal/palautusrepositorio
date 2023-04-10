@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Elämäni kiven sisällä",
+    "author": "Mölli Rosvonen",
+    "url": "google.com/dontdocrimes",
+    "likes": 2
+}
