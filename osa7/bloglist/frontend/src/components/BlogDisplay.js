@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from '../reducers/notificationReducer'
 import { addVote, createBlog, removeBlog, setBlogs } from '../reducers/blogReducer'
 import { logUserOut } from '../reducers/userReducer'
+import { Link } from 'react-router-dom'
 
 const BlogDisplay = () => {
 	const dispatch = useDispatch()
@@ -33,28 +34,11 @@ const BlogDisplay = () => {
 	const sortBlogs = []
 		.concat(blogs)
 		.sort((a, b) => (a.likes < b.likes ? 1 : -1))
-		.map((blog) => (
-			<Blog
-				key={blog.id}
-				user={user}
-				blog={blog}
-				updateLikes={() => updateLikes(blog)}
-				handleRemoveButton={() => handleRemove(blog)}
-			/>
+		.map((blog) => (<div className='blog' key={blog.id}>
+			<Link
+				to={`/blogs/${blog.id}`}
+			>{blog.title}</Link> </div>
 		))
-
-	const updateLikes = async (blog) => {
-		const updatedBlog = { ...blog, likes: blog.likes + 1 }
-		dispatch(addVote(updatedBlog.id, updatedBlog))
-		showNotification(dispatch, `like added to ${updatedBlog.title}`)
-	}
-
-	const handleRemove = async (blog) => {
-		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-			dispatch(removeBlog(blog.id))
-			showNotification(dispatch, `${blog.title} removed`)
-		}
-	}
 
 	return (
 		<div>

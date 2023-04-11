@@ -1,53 +1,53 @@
 import { useState } from 'react'
-import TogglableButton from './TogglableButton'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog, updateLikes, handleRemoveButton }) => {
+const Blog = ({ updateLikes, handleRemoveButton }) => {
+
+	const blogs =  useSelector(state => {
+		return state.blogs
+	})
+
+	const id = useParams().id
+	let blog = blogs.find(n => n.id === id)
 	const user = useSelector(state => {
 		return state.user
 	})
-	const [blogInfoVisible, setBlogInfoVisible] = useState(false)
-	const showWhenVisible = { display: blogInfoVisible ? '' : 'none' }
+
+	if (!user) {
+		return null
+	}
+	if (!blog) {
+		return null
+	}
 
 	return (
-		<div className="blog">
-			{blog.title} {blog.author}{' '}
-			<TogglableButton
-				state={blogInfoVisible}
-				handler1={() => setBlogInfoVisible(false)}
-				handler2={() => setBlogInfoVisible(true)}
-				text1="hide"
-				text2="view"
-			/>
-			{user && (
-				<div className="toggle-view" style={showWhenVisible}>
-				<p>
-					{blog.url}
-					<br />
-					likes: {blog.likes}{' '}
-					<button id="like-button" onClick={updateLikes}>
-						like
+		<div>
+			<h1>{blog.title}</h1>
+			<p>
+				{blog.url}
+				<br />
+				likes: {blog.likes}{' '}
+				<button id="like-button" onClick={() => updateLikes(blog)}>
+					like
+				</button>
+				<br />
+				{blog.user.name}
+				<br />
+				{user.username === blog.user.username && (
+					<button id="remove-button" onClick={() => handleRemoveButton(blog)}>
+						remove
 					</button>
-					<br />
-					{blog.user.name}
-					<br />
-					{user.username === blog.user.username && (
-						<button id="remove-button" onClick={handleRemoveButton}>
-							remove
-						</button>
-					)}
-				</p>
-			</div>
-			)}
+				)}
+			</p>
 		</div>
 	)
 }
 
 Blog.propTypes = {
-	blog: PropTypes.object.isRequired,
-	updateLikes: PropTypes.func.isRequired,
-	handleRemoveButton: PropTypes.func.isRequired,
+	updateLikes: PropTypes.func.isRequired, 
+	handleRemoveButton: PropTypes.func.isRequired
 }
 
 export default Blog
