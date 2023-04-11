@@ -56,20 +56,9 @@ const BlogDisplay = () => {
 		}
 	}
 
-	// logoutin handleri
-	const handleLogout = (event) => {
-		event.preventDefault()
-		console.log('logging out')
-		dispatch(logUserOut())
-	}
-
 	return (
 		<div>
-			<h2>blogs</h2>
-			<p>
-				{user.name} logged in
-				<button onClick={handleLogout}>logout</button>
-			</p>
+			
 			<div style={hideWhenVisible}>
 				<button onClick={() => setFormVisible(true)}>add new</button>
 			</div>

@@ -20,7 +20,8 @@ const Blog = ({ blog, updateLikes, handleRemoveButton }) => {
 				text1="hide"
 				text2="view"
 			/>
-			<div className="toggle-view" style={showWhenVisible}>
+			{user && (
+				<div className="toggle-view" style={showWhenVisible}>
 				<p>
 					{blog.url}
 					<br />
@@ -38,12 +39,12 @@ const Blog = ({ blog, updateLikes, handleRemoveButton }) => {
 					)}
 				</p>
 			</div>
+			)}
 		</div>
 	)
 }
 
 Blog.propTypes = {
-	user: PropTypes.object.isRequired,
 	blog: PropTypes.object.isRequired,
 	updateLikes: PropTypes.func.isRequired,
 	handleRemoveButton: PropTypes.func.isRequired,
