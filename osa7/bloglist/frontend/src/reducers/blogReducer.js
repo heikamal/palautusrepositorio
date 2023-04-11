@@ -6,6 +6,12 @@ const blogSlice = createSlice({
   name: 'blogs',
   initialState: [],
   reducers: {
+    newComment(state, action){
+      const id = action.payload.id
+      const blogToUpdate = action.payload.updatedBlog
+      return state.map(blog => 
+        blog.id !== id ? blog : blogToUpdate)
+    },
     incrementVote(state, action) {
       const id = action.payload.id
       const blogToUpdate = action.payload.updatedBlog
@@ -60,6 +66,13 @@ export const removeBlog = (id) => {
 	}
 }
 
-export const { toggleImportanceOf, appendBlog, setBlogs, incrementVote, filterOut } = blogSlice.actions
+export const addComment = (id, updatedBlog) => {
+  return async dispatch => {
+    await blogService.update(id, updatedBlog)
+    dispatch(newComment({id, updatedBlog}))
+  }
+}
+
+export const { toggleImportanceOf, appendBlog, setBlogs, incrementVote, filterOut, newComment } = blogSlice.actions
 
 export default blogSlice.reducer

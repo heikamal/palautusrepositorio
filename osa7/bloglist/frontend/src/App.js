@@ -78,7 +78,7 @@ const App = () => {
 	return (
 		<><div className='header'> <Link to="/">blogs</Link> <Link to="/users">users</Link> {user.name} logged in <button onClick={handleLogout}>logout</button></div>
 		<div>
-			<h2>blogs</h2>
+			<h2>blog app</h2>
 			<Error />
 			<Notification />
 			{!user && (
