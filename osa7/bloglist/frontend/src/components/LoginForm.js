@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { showError } from '../reducers/errorReducer'
-import { logUserIn } from '../reducers/userReducer'
+import blogService from '../services/blogs'
+import loginService from '../services/login'
+import { logUserIn, setUser } from '../reducers/userReducer'
 import { showNotification } from '../reducers/notificationReducer'
+import { Button, TextField } from '@mui/material'
 
 const LoginForm = () => {
 	const dispatch = useDispatch()
@@ -14,10 +17,13 @@ const LoginForm = () => {
 		event.preventDefault()
 
 		try {
-			dispatch(logUserIn({ username, password }))
+			const user = await loginService.login({ username, password })
+			window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
+			blogService.setToken(user.token)
+			dispatch(setUser(user))
+			showNotification(dispatch, 'logged in')
 			setUsername('')
 			setPassword('')
-			showNotification(dispatch, 'logged in')
 		} catch (exception) {
 			showError(dispatch, 'wrong username or password')
 			setUsername('')
@@ -30,8 +36,7 @@ const LoginForm = () => {
 			<h2>log in to application</h2>
 			<form onSubmit={handleLogin}>
 				<div>
-					username
-					<input
+					<TextField label="username"
 						id="username"
 						type="text"
 						value={username}
@@ -40,8 +45,7 @@ const LoginForm = () => {
 					/>
 				</div>
 				<div>
-					password
-					<input
+					<TextField label="password"
 						id="password"
 						type="test"
 						value={password}
@@ -49,9 +53,9 @@ const LoginForm = () => {
 						onChange={({ target }) => setPassword(target.value)}
 					/>
 				</div>
-				<button id="login-button" type="submit">
+				<Button variant="contained" color="primary" id="login-button" type="submit">
 					login
-				</button>
+				</Button>
 			</form>
 		</div>
 	)

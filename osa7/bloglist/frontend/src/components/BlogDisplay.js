@@ -1,10 +1,11 @@
 import BlogForm from './BlogForm'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from '../reducers/notificationReducer'
 import {  createBlog } from '../reducers/blogReducer'
 
 import { Link } from 'react-router-dom'
+import { Paper, TableBody, TableCell, TableRow, TableContainer, Table, Button } from '@mui/material'
 
 const BlogDisplay = () => {
 	const dispatch = useDispatch()
@@ -31,30 +32,40 @@ const BlogDisplay = () => {
 	const sortBlogs = []
 		.concat(blogs)
 		.sort((a, b) => (a.likes < b.likes ? 1 : -1))
-		.map((blog) => (<div className='blog' key={blog.id}>
-			<Link
-				to={`/blogs/${blog.id}`}
-			>{blog.title}</Link> </div>
+		.map((blog) => (
+			<TableRow className='blog' key={blog.id}>
+				<TableCell>
+					<Link
+						to={`/blogs/${blog.id}`}
+					>{blog.title}
+					</Link>
+				</TableCell> 
+			</TableRow>
 		))
 
 	return (
 		<div>
-			
 			<div style={hideWhenVisible}>
-				<button onClick={() => setFormVisible(true)}>add new</button>
+				<Button variant="contained" onClick={() => setFormVisible(true)}>add new</Button>
 			</div>
 			<div style={showWhenVisible}>
 				<h2>create new</h2>
-				<BlogForm addNewBlog={addNewBlog} />
-				<button
+				<BlogForm addNewBlog={addNewBlog} /> <br/>
+				<Button variant="contained"
 					onClick={() => {
 						setFormVisible(false)
 					}}
 				>
 					cancel
-				</button>
+				</Button>
 			</div>
-			{sortBlogs}
+			<TableContainer component={Paper}>
+				<Table>
+					<TableBody>
+						{sortBlogs}
+					</TableBody>
+				</Table>
+			</TableContainer>
 		</div>
 	)
 }

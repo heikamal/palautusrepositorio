@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { addComment } from '../reducers/blogReducer'
 import { showNotification } from '../reducers/notificationReducer'
+import { Button, TextField } from '@mui/material'
 
 const Blog = ({ updateLikes, handleRemoveButton }) => {
 	const dispatch = useDispatch()
@@ -44,29 +45,29 @@ const Blog = ({ updateLikes, handleRemoveButton }) => {
 				{blog.url}
 				<br />
 				likes: {blog.likes}{' '}
-				<button id="like-button" onClick={() => updateLikes(blog)}>
+				<Button variant='outlined' id="like-button" onClick={() => updateLikes(blog)}>
 					like
-				</button>
+				</Button>
 				<br />
 				added by {blog.user.name}
 				<br />
 				{user.username === blog.user.username && (
-					<button id="remove-button" onClick={() => handleRemoveButton(blog)}>
+					<Button variant='outlined' id="remove-button" onClick={() => handleRemoveButton(blog)}>
 						remove
-					</button>
+					</Button>
 				)}
 			</p>
 
 			<h3>comments</h3>
 			<form onSubmit={commentHandler}>
-				<input
+				<TextField variant='standard' label="comment"
 				id="comment"
 				type="text"
 				value={comment}
 				name="Comment"
 				onChange={({ target }) => setComment(target.value)}
 				/>
-				<button type='submit'>add comment</button>
+				<Button variant='outlined' type='submit'>add comment</Button>
 			</form>
 			<ul>
 				{blog.comments.map(comment => (

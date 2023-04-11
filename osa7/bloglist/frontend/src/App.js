@@ -10,12 +10,12 @@ import BlogUser from './components/BlogUser'
 import Blog from './components/Blog'
 import { useDispatch, useSelector } from 'react-redux'
 import { addVote, initializeBlogs, removeBlog } from './reducers/blogReducer'
-import { clearUser, logUserOut, setUser } from './reducers/userReducer'
+import {  logUserOut, setUser } from './reducers/userReducer'
 import {
-	BrowserRouter as Router,
-	Routes, Route, Link, useParams, useNavigate
+	Routes, Route, Link, useNavigate
   } from 'react-router-dom'
 import { showNotification } from './reducers/notificationReducer'
+import { AppBar, Button, Container, IconButton, Toolbar } from '@mui/material'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -67,33 +67,50 @@ const App = () => {
 
 	if (!user) {
 		return (
+		<Container>
 			<div>
 				<Error />
 				<Notification />
 				<LoginForm />
 			</div>
+		</Container>
 		)
 	}
 
 	return (
-		<><div className='header'> <Link to="/">blogs</Link> <Link to="/users">users</Link> {user.name} logged in <button onClick={handleLogout}>logout</button></div>
-		<div>
-			<h2>blog app</h2>
-			<Error />
-			<Notification />
-			{!user && (
-				<div>
-					<LoginForm />
-				</div>
-			)}
+		<Container>
+			<>
+			<AppBar position="static">
+				<Toolbar>
+					<IconButton edge="start" color="inherit" aria-label="menu">
+					</IconButton>
+					<Button color="inherit" component={Link} to="/">
+						blogs
+					</Button>
+					<Button color="inherit" component={Link} to="/users"> 
+						users
+					</Button > 
+					<p style={{ paddingLeft: 10}}>{user.name} logged in <Button variant='outlined' color="inherit" onClick={handleLogout}>logout</Button></p>             
+				</Toolbar>
+			</AppBar>
+			<div>
+				<h2>blog app</h2>
+				<Error />
+				<Notification />
+				{!user && (
+					<div>
+						<LoginForm />
+					</div>
+				)}
 
-			<Routes>
-				<Route path="/" element={<BlogDisplay />} />
-				<Route path="/users" element={<Users users={users} />} />
-				<Route path="/users/:id" element={<BlogUser users={users} />} />
-				<Route path="/blogs/:id" element={<Blog updateLikes={updateLikes} handleRemoveButton={handleRemove} />} />
-			</Routes>
-		</div></>
+				<Routes>
+					<Route path="/" element={<BlogDisplay />} />
+					<Route path="/users" element={<Users users={users} />} />
+					<Route path="/users/:id" element={<BlogUser users={users} />} />
+					<Route path="/blogs/:id" element={<Blog updateLikes={updateLikes} handleRemoveButton={handleRemove} />} />
+				</Routes>
+			</div></>
+		</Container>
 	)
 }
 
