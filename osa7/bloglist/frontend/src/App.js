@@ -5,53 +5,19 @@ import LoginForm from './components/LoginForm'
 import BlogDisplay from './components/BlogDisplay'
 import Error from './components/Error'
 import Notification from './components/Notification'
+import Users from './components/Users'
+import BlogUser from './components/BlogUser'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { clearUser, logUserOut, setUser } from './reducers/userReducer'
 import {
 	BrowserRouter as Router,
-	Routes, Route, Link
+	Routes, Route, Link, useParams
   } from 'react-router-dom'
-
-const Users = () => {
-	const [users, setUsers] = useState(null)
-
-	useEffect(() => {
-		userService.getAll().then(result => {
-			setUsers(result)
-		})
-	}, [])
-
-	const style = {
-		textAlign: 'left'
-	}
-
-	return (
-		<div className='userList'>
-			{users && (
-				<table>
-					<thead>
-						<tr>
-							<th></th>
-							<th>blogs created</th>
-						</tr>
-					</thead>
-					<tbody>
-						{users.map(user => (
-							<tr key={user.id}>
-								<td style={style}>{user.name}</td>
-								<td style={style}>{user.blogs.length}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			)}
-		</div>
-	)
-}
 
 const App = () => {
 	const dispatch = useDispatch()
+	const [users, setUsers] = useState(null)
 
 	// haetaan blogit
 	useEffect(() => {
@@ -71,6 +37,9 @@ const App = () => {
 			dispatch(setUser(user))
 			blogService.setToken(user.token)
 		}
+		userService.getAll().then(result => {
+			setUsers(result)
+		})
 	}, [])
 
 	// logoutin handleri
@@ -98,7 +67,8 @@ const App = () => {
 					</p>
 					<Routes>
 						<Route path="/" element={<BlogDisplay />} />
-						<Route path="/users" element={<Users />} />
+						<Route path="/users" element={<Users users={users} />} />
+						<Route path="/users/:id" element={<BlogUser users={users} />} />
 					</Routes>
 				</div>
 			)}
