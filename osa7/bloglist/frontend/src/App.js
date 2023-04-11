@@ -48,16 +48,13 @@ const App = () => {
 	// logoutin handleri
 	const handleLogout = (event) => {
 		event.preventDefault()
-		console.log('logging out')
 		dispatch(logUserOut())
 	}
 
 	const updateLikes = async (blog) => {
 		const updatedBlog = { ...blog, likes: blog.likes + 1 }
 		dispatch(addVote(updatedBlog.id, updatedBlog))
-		
 		showNotification(dispatch, `like added to ${updatedBlog.title}`)
-		
 	}
 
 	const handleRemove = async (blog) => {
@@ -68,7 +65,18 @@ const App = () => {
 		}
 	}
 
+	if (!user) {
+		return (
+			<div>
+				<Error />
+				<Notification />
+				<LoginForm />
+			</div>
+		)
+	}
+
 	return (
+		<><div className='header'> <Link to="/">blogs</Link> <Link to="/users">users</Link> {user.name} logged in <button onClick={handleLogout}>logout</button></div>
 		<div>
 			<h2>blogs</h2>
 			<Error />
@@ -78,21 +86,14 @@ const App = () => {
 					<LoginForm />
 				</div>
 			)}
-			{user && (
-				<div>
-					<p>
-						{user.name} logged in
-						<button onClick={handleLogout}>logout</button>
-					</p>
-					<Routes>
-						<Route path="/" element={<BlogDisplay />} />
-						<Route path="/users" element={<Users users={users} />} />
-						<Route path="/users/:id" element={<BlogUser users={users} />} />
-						<Route path="/blogs/:id" element={<Blog updateLikes={updateLikes} handleRemoveButton={handleRemove} />} />
-					</Routes>
-				</div>
-			)}
-		</div>
+
+			<Routes>
+				<Route path="/" element={<BlogDisplay />} />
+				<Route path="/users" element={<Users users={users} />} />
+				<Route path="/users/:id" element={<BlogUser users={users} />} />
+				<Route path="/blogs/:id" element={<Blog updateLikes={updateLikes} handleRemoveButton={handleRemove} />} />
+			</Routes>
+		</div></>
 	)
 }
 

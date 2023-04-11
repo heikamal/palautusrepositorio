@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import loginService from '../services/login'
-import blogService from '../services/blogs'
 import { useDispatch } from 'react-redux'
 import { showError } from '../reducers/errorReducer'
-import { logUserIn, setUser } from '../reducers/userReducer'
+import { logUserIn } from '../reducers/userReducer'
+import { showNotification } from '../reducers/notificationReducer'
 
 const LoginForm = () => {
 	const dispatch = useDispatch()
@@ -13,12 +12,12 @@ const LoginForm = () => {
 	// loginin handleri
 	const handleLogin = async (event) => {
 		event.preventDefault()
-		console.log('logging in with', username, password)
 
 		try {
 			dispatch(logUserIn({ username, password }))
 			setUsername('')
 			setPassword('')
+			showNotification(dispatch, 'logged in')
 		} catch (exception) {
 			showError(dispatch, 'wrong username or password')
 			setUsername('')

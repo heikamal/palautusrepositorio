@@ -4,8 +4,6 @@ const BlogUser = ({ users }) => {
 	const id = useParams().id
 	let user = users.find(n => n.id === id)
 	const blogs = user.blogs
-
-	console.log('blogs: ', blogs)
 	if (!user) {
 		return null
 	}

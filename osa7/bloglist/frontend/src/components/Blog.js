@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -33,7 +32,7 @@ const Blog = ({ updateLikes, handleRemoveButton }) => {
 					like
 				</button>
 				<br />
-				{blog.user.name}
+				added by {blog.user.name}
 				<br />
 				{user.username === blog.user.username && (
 					<button id="remove-button" onClick={() => handleRemoveButton(blog)}>

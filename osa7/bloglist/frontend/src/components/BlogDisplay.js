@@ -1,12 +1,9 @@
-import Blog from './Blog'
 import BlogForm from './BlogForm'
 import { useState, useEffect } from 'react'
-import blogService from '../services/blogs'
-import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from '../reducers/notificationReducer'
-import { addVote, createBlog, removeBlog, setBlogs } from '../reducers/blogReducer'
-import { logUserOut } from '../reducers/userReducer'
+import {  createBlog } from '../reducers/blogReducer'
+
 import { Link } from 'react-router-dom'
 
 const BlogDisplay = () => {
