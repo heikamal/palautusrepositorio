@@ -167,7 +167,8 @@ const resolvers = {
       // tee kirjasta oma olionsa
       const book = {...args, id: uuid() }
       // tarkista onko kirjailija jo kannassa
-      if (!authors.includes(book.author)) {
+      const names = authors.map(author => author.name)
+      if (!names.includes(book.author)) {
         // tee kirjailijasta oma olionsa
         const author = {
           name: book.author,

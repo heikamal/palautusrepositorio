@@ -31,7 +31,6 @@ const App = () => {
 
   useEffect(() => {
     if (!result.loading){
-      console.log(result)
       setAuthors(result.data.allAuthors)
       setBooks(result.data.allBooks)
     }
@@ -44,6 +43,15 @@ const App = () => {
 
   const addBook = (book) => {
     setBooks(books.concat(book))
+    // jos kirjailija löytyy, kasvata kirjailijan kirjojen lukumäärää yhdellä
+    // jos ei, lisää uusi kirjailija
+    const names = authors.map(author => author.name)
+    if (names.includes(book.author)){
+      setAuthors(authors.map(author => author.name === book.author ? {...author, bookCount: author.bookCount + 1 } : author))
+    } else {
+      const newAuthor = { name: book.author, born: null, bookCount: 1}
+      setAuthors(authors.concat(newAuthor))
+    }
   }
 
   return (
