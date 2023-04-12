@@ -106,10 +106,18 @@ const typeDefs = `
     genres: [String]
   }
 
+  type Author {
+    name: String!
+    id: ID!
+    born: Int
+    bookCount: Int
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks: [Book!]!
+    allAuthors: [Author!]!
   }
 `
 
@@ -119,7 +127,17 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     // palauta kaikki kirjat
-    allBooks: () => books
+    allBooks: () => books,
+    //palauta kaikki kirjailijat
+    allAuthors: () => authors,
+  },
+  // kirjoitetaan funktio hakemaan jokaiselle kirjailijalle kaikki tämän kirjoittamat kirjat
+  Author: {
+    bookCount: async (root) => {
+      // luo uusi taulukko suodattamalla kaikki 
+      const authorBooks = books.filter(book => book.author === root.name)
+      return authorBooks.length
+    } 
   }
 }
 
