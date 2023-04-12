@@ -32,11 +32,7 @@ const NewBook = (props) => {
 
     // kutsu mutaatiota
     const result =  await createBook({ variables: { title, author, published: parseInt(published), genres } })
-
-    console.log(result.data)
     props.addBook(result.data.addBook)
-
-    // TODO: hoida kirjailijan lisäys
 
     setTitle('')
     setPublished('')

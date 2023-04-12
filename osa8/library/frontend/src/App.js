@@ -47,11 +47,17 @@ const App = () => {
     // jos ei, lisää uusi kirjailija
     const names = authors.map(author => author.name)
     if (names.includes(book.author)){
-      setAuthors(authors.map(author => author.name === book.author ? {...author, bookCount: author.bookCount + 1 } : author))
+      const oldAuthor = authors.find(author => author.name === book.author)
+      const newAuthor = {...oldAuthor, bookCount: oldAuthor.bookCount + 1 }
+      updateAuthor(newAuthor)
     } else {
       const newAuthor = { name: book.author, born: null, bookCount: 1}
       setAuthors(authors.concat(newAuthor))
     }
+  }
+
+  const updateAuthor = (newAuthor) => {
+    setAuthors(authors.map(author => author.name === newAuthor.name ? newAuthor : author))
   }
 
   return (
@@ -62,7 +68,7 @@ const App = () => {
         <button onClick={() => setPage('add')}>add book</button>
       </div>
 
-      <Authors show={page === 'authors'} authors={authors} />
+      <Authors show={page === 'authors'} authors={authors} updateAuthor={updateAuthor} />
 
       <Books show={page === 'books'} books={books} />
 
