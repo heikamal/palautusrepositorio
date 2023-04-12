@@ -127,6 +127,10 @@ const typeDefs = `
       published: Int!
       genres: [String!]!
     ): Book
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
   }
 `
 
@@ -175,6 +179,17 @@ const resolvers = {
       // lisää se kantaan
       books = books.concat(book)
       return book
+    },
+    editAuthor: (root, args) => {
+      // etsi kirjailija nimen perusteella
+      const updatedAuthor = { ...authors.find(author => author.name === args.name), born: args.setBornTo }
+      // varmista että kirjailijalla on nimi => löytyy
+      if (!updatedAuthor.name) {
+        return null
+      }
+      // kopioi kirjailijoiden lista muokaten kirjailijan syntymävuotta
+      authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
+      return updatedAuthor
     }
   }
 }
