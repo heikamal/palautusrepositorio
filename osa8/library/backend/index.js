@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { v1: uuid } = require('uuid')
 
 let authors = [
   {
@@ -119,6 +120,14 @@ const typeDefs = `
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+  }
 `
 
 const resolvers = {
@@ -128,9 +137,11 @@ const resolvers = {
     authorCount: () => authors.length,
     // palauta kaikki kirjat
     allBooks: (root, args) => {
+      // jos kirjailija ollaan annettu
       const authorBooks = args.author 
         ? books.filter(book => book.author === args.author) 
         : books
+      // jos genre ollaan annettu
       const genreBooks = args.genre 
         ? authorBooks.filter(book => book.genres.includes(args.genre)) 
         : authorBooks
@@ -146,6 +157,25 @@ const resolvers = {
       const authorBooks = books.filter(book => book.author === root.name)
       return authorBooks.length
     } 
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      // tee kirjasta oma olionsa
+      const book = {...args, id: uuid() }
+      // tarkista onko kirjailija jo kannassa
+      if (!authors.includes(book.author)) {
+        // tee kirjailijasta oma olionsa
+        const author = {
+          name: book.author,
+          id: uuid()
+        }
+        // lisää se kantaan
+        authors = authors.concat(author)
+      }
+      // lisää se kantaan
+      books = books.concat(book)
+      return book
+    }
   }
 }
 
