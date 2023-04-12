@@ -5,12 +5,18 @@ import NewBook from './components/NewBook'
 import { gql, useQuery } from '@apollo/client'
 
 // luodaan query kaikille kirjailijoille
-const ALL_AUTHORS = gql`
+const INIT_DATA = gql`
   query {
-    allAuthors  {
+    allAuthors {
       name
       born
       bookCount
+    }
+    allBooks {
+      title
+      author
+      published
+      genres
     }
   }
 `
@@ -18,7 +24,7 @@ const ALL_AUTHORS = gql`
 const App = () => {
   const [page, setPage] = useState('authors')
 
-  const result = useQuery(ALL_AUTHORS)
+  const result = useQuery(INIT_DATA)
 
   if (result.loading)  {
     return <div>loading...</div>
@@ -34,7 +40,7 @@ const App = () => {
 
       <Authors show={page === 'authors'} authors={result.data.allAuthors} />
 
-      <Books show={page === 'books'} />
+      <Books show={page === 'books'} books={result.data.allBooks} />
 
       <NewBook show={page === 'add'} />
     </div>
