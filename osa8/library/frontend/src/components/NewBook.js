@@ -1,4 +1,17 @@
+import { gql, useMutation } from '@apollo/client'
 import { useState } from 'react'
+
+// mutaatio
+const CREATE_BOOK = gql`
+mutation Mutation($title: String!, $author: String!, $published: Int!, $genres: [String!]!) {
+  addBook(title: $title, author: $author, published: $published, genres: $genres) {
+    title
+    author
+    published
+    genres
+  }
+}
+`
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -7,6 +20,9 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
+  // mutaation käyttö
+  const [ createBook ] = useMutation(CREATE_BOOK)
+
   if (!props.show) {
     return null
   }
@@ -14,7 +30,13 @@ const NewBook = (props) => {
   const submit = async (event) => {
     event.preventDefault()
 
-    console.log('add book...')
+    // kutsu mutaatiota
+    const result =  await createBook({ variables: { title, author, published: parseInt(published), genres } })
+
+    console.log(result.data)
+    props.addBook(result.data.addBook)
+
+    // TODO: hoida kirjailijan lisäys
 
     setTitle('')
     setPublished('')

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
@@ -23,11 +23,27 @@ const INIT_DATA = gql`
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [authors, setAuthors] = useState([])
+  const [books, setBooks] = useState([])
 
+  
   const result = useQuery(INIT_DATA)
+
+  useEffect(() => {
+    if (!result.loading){
+      console.log(result)
+      setAuthors(result.data.allAuthors)
+      setBooks(result.data.allBooks)
+    }
+  }, [result])
+ 
 
   if (result.loading)  {
     return <div>loading...</div>
+  }
+
+  const addBook = (book) => {
+    setBooks(books.concat(book))
   }
 
   return (
@@ -38,11 +54,11 @@ const App = () => {
         <button onClick={() => setPage('add')}>add book</button>
       </div>
 
-      <Authors show={page === 'authors'} authors={result.data.allAuthors} />
+      <Authors show={page === 'authors'} authors={authors} />
 
-      <Books show={page === 'books'} books={result.data.allBooks} />
+      <Books show={page === 'books'} books={books} />
 
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} addBook={addBook} />
     </div>
   )
 }
