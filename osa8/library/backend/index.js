@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Author = require('./models/author')
 const Book = require('./models/book')
+const { GraphQLError } = require('graphql')
 
 require('dotenv').config()
 
@@ -35,12 +36,13 @@ const typeDefs = `
     name: String!
     id: ID!
     born: Int
+    bookCount: Int!
   }
 
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks: [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
   type Mutation {
@@ -65,45 +67,84 @@ const resolvers = {
     // palauta kaikki kirjat
     
     allBooks:  async (root, args) => {
-      // TODO: filters
-      return Book.find({})
+      const books = await Book.find({})
+      const authors = await Author.find({})
+      // lisää kirjoihin kirjailijat
+      books.map(book => {
+        var temp = Object.assign({}, book)
+        temp._doc.author = authors.find(item => item._id.toString() === book.author.toString())
+        return temp._doc
+      })
+
+      // jos kirjailija ollaan annettu
+      const authorBooks = args.author 
+        ? books.filter(book => book.author.name === args.author) 
+        : books
+      // jos genre ollaan annettu
+      const genreBooks = args.genre 
+        ? authorBooks.filter(book => book.genres.includes(args.genre)) 
+        : authorBooks
+
+      return genreBooks
     },
     //palauta kaikki kirjailijat
     allAuthors: async (root, args) => {
       return Author.find({})
     },
   },
-  /*// kirjoitetaan funktio hakemaan jokaiselle kirjailijalle kaikki tämän kirjoittamat kirjat
+  // kirjoitetaan funktio hakemaan jokaiselle kirjailijalle kaikki tämän kirjoittamat kirjat
   Author: {
     bookCount: async (root) => {
-      // TODO: make this work!
       // luo uusi taulukko suodattamalla kaikki 
-      const authorBooks = books.filter(book => book.author === root.name)
-      return authorBooks.length
+      const authorBooks = await Book.collection.countDocuments({ author: root._id})
+      return authorBooks
     } 
-  },*/
+  },
   Mutation: {
-    addBook: (root, args) => {
+    addBook: async (root, args) => {
       // tee kirjasta oma olionsa
-      const book = new Book({ ...args })
-      // tarkista onko kirjailija jo kannassa
-        // tee kirjailijasta oma olionsa
-        // lisää se kantaan
-      
-      // hae kirjailija kannasta ja lisää se kirjaan
-      // lisää kirja kantaan
-      return book.save()
-    },
-    editAuthor: (root, args) => {
-      // etsi kirjailija nimen perusteella
-      const updatedAuthor = { ...authors.find(author => author.name === args.name), born: args.setBornTo }
-      // varmista että kirjailijalla on nimi => löytyy
-      if (!updatedAuthor.name) {
-        return null
+      // tee kirjailija, varmista onko jo olemassa ja kannassa
+      let addAuthor = new Author({ name: args.author })
+      const search = await Author.find({ name: addAuthor.name })
+      if (search[0]){
+        addAuthor = search[0]
+      } else {
+        try {
+          await addAuthor.save()
+        } catch (error) {
+          throw new GraphQLError('Saving author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name, 
+              error
+            }}) 
+        }
       }
-      // kopioi kirjailijoiden lista muokaten kirjailijan syntymävuotta
-      authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
-      return updatedAuthor
+      
+      const book = new Book({ title: args.title, 
+        author: addAuthor, 
+        published: args.published, 
+        genres: args.genres })
+      
+      // lisää kirjailija kantaan kirjaan
+      // lisää kirja kantaan
+      try {
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('Adding a new book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title, 
+            error
+          }}) 
+      }
+      return book
+    },
+    editAuthor: async (root, args) => {
+      // etsi kirjailija nimen perusteella
+      const query = { name: args.name }
+      const author = await Author.findOneAndUpdate(query, { born: args.setBornTo }, { returnDocument: 'after' })
+      return author
     }
   }
 }
