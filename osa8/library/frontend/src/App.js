@@ -8,16 +8,18 @@ import { gql, useQuery } from '@apollo/client'
 const INIT_DATA = gql`
   query {
     allAuthors {
+    name
+    born
+    bookCount
+  }
+  allBooks {
+    title
+    author {
       name
-      born
-      bookCount
     }
-    allBooks {
-      title
-      author
-      published
-      genres
-    }
+    published
+    genres
+  }
   }
 `
 
@@ -30,11 +32,11 @@ const App = () => {
   const result = useQuery(INIT_DATA)
 
   useEffect(() => {
-    if (!result.loading){
+    if ( result.data ){
       setAuthors(result.data.allAuthors)
       setBooks(result.data.allBooks)
     }
-  }, [result])
+  }, [result.data]) // eslint-disable-line
  
 
   if (result.loading)  {
