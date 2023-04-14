@@ -4,6 +4,8 @@ import { USER } from "../queries"
 
 const Recommend = (props) => {
     const [user, setUser] = useState(null)
+
+    // TODO: 8.20
     
     const result = useQuery(USER)
     useEffect(() => {
