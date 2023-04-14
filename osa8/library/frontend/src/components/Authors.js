@@ -1,15 +1,8 @@
-import { gql, useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client"
 import { useState } from "react"
+import { UPDATE_AUTHOR } from "../queries"
 
-const UPDATE_AUTHOR = gql`
-mutation Mutation($name: String!, $setBornTo: Int!) {
-  editAuthor(name: $name, setBornTo: $setBornTo) {
-    name
-    born
-    bookCount
-  }
-}
-`
+
 
 const Authors = (props) => {
   const [name, setName] = useState('')
@@ -50,6 +43,8 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      {props.token &&
+      <div> 
       <h3>Set birthyear</h3>
       <form onSubmit={updateHandler}>
         <select value={name} onChange={({ target }) => setName(target.value)}>
@@ -62,6 +57,7 @@ const Authors = (props) => {
         /><br/>
         <button type='submit'>update author</button>
       </form>
+      </div>}
     </div>
   )
 }
