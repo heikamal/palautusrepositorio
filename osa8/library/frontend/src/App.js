@@ -5,6 +5,7 @@ import NewBook from './components/NewBook'
 import { useApolloClient, useQuery } from '@apollo/client'
 import LoginForm from './components/LoginForm'
 import { INIT_DATA } from './queries'
+import Recommend from './components/Recommend'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -51,23 +52,33 @@ const App = () => {
     setToken(null)
     localStorage.clear()
     client.resetStore()
+    setPage('authors')
+  }
+
+  // lisätty kaikkien hakeminen aina uudestaan kun sivua päivitetään
+  const changePage = (page) => {
+    setPage(page)
+    result.refetch({ author: null, genre: null })
   }
 
   return (
     <div>
       <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        {token && <button onClick={() => setPage('add')}>add book</button>}
-        {!token && <button onClick={() => setPage('login')}>login</button>}
+        <button onClick={() => changePage('authors')}>authors</button>
+        <button onClick={() => changePage('books')}>books</button>
+        {token && <button onClick={() => changePage('add')}>add book</button>}
+        {token && <button onClick={() => changePage('recommend')}>recommend</button>}
+        {!token && <button onClick={() => changePage('login')}>login</button>}
         {token && <button onClick={() => logout()}>logout</button>}
       </div>
 
       <Authors show={page === 'authors'} authors={authors} updateAuthor={updateAuthor} token={token} />
 
-      <Books show={page === 'books'} books={books} />
+      <Books show={page === 'books'} books={books} setBooks={setBooks} refetch={result.refetch} />
 
       <NewBook show={page === 'add'} addBook={addBook} />
+
+      <Recommend show={page === 'recommend'} books={books} />
 
       <LoginForm show={page === 'login'} setToken={setToken} setPage={setPage} />
     </div>

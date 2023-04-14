@@ -1,9 +1,24 @@
+
 const Books = (props) => {
+
+  const books = props.books
+  const genres = []
+
   if (!props.show) {
     return null
   }
 
-  const books = props.books
+  books.forEach(book => {
+    book.genres.forEach(genre => {
+      if (!genres.includes(genre)){
+        genres.push(genre)
+      }
+    })
+  })
+
+  const handleFilter = (filter) => {
+    props.refetch({ genre: filter })
+  }
 
   return (
     <div>
@@ -25,6 +40,8 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      {genres.map(genre => <button key={genres.indexOf(genre)} onClick={() => {handleFilter(genre)}} >{genre}</button>)}
+      <button onClick={() => {handleFilter(null)}}>all</button>
     </div>
   )
 }

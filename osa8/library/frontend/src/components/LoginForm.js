@@ -16,9 +16,10 @@ const LoginForm = ({ show, setToken, setPage }) => {
         if ( result.data ) {      
             const token = result.data.login.value      
             setToken(token)      
-            localStorage.setItem('library-user-token', token)    
+            localStorage.setItem('library-user-token', token) 
         }  
     }, [result.data]) // eslint-disable-line
+
     const submit = async (event) => {
         event.preventDefault()
 
