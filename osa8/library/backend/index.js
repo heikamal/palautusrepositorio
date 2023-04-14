@@ -67,25 +67,33 @@ const resolvers = {
     // palauta kaikki kirjat
     
     allBooks:  async (root, args) => {
-      const books = await Book.find({})
+
+      const author = await Author.find({ name: args.author })
+
+      const query = {}
+
+      // jos kirjailija ollaan annettu
+      if (author[0]){
+        query.author = author[0].id
+      }
+
+      // jos genre ollaan annettu
+      if (args.genre) {
+        query.genres= args.genre
+      }
+      
+      const books = await Book.find(query)
+      
+      // TODO: keksi keino poistaa tarve kaikkien hakemiselle?
       const authors = await Author.find({})
-      // lisää kirjoihin kirjailijat
+      
       books.map(book => {
-        var temp = Object.assign({}, book)
+        let temp = Object.assign({}, book)
         temp._doc.author = authors.find(item => item._id.toString() === book.author.toString())
         return temp._doc
       })
 
-      // jos kirjailija ollaan annettu
-      const authorBooks = args.author 
-        ? books.filter(book => book.author.name === args.author) 
-        : books
-      // jos genre ollaan annettu
-      const genreBooks = args.genre 
-        ? authorBooks.filter(book => book.genres.includes(args.genre)) 
-        : authorBooks
-
-      return genreBooks
+      return books
     },
     //palauta kaikki kirjailijat
     allAuthors: async (root, args) => {
