@@ -11,7 +11,6 @@ const Recommend = (props) => {
     
   useEffect(() => {
     if (!userQuery.loading) {
-      console.log(userQuery.data)
       setGenre(userQuery.data.me.favoriteGenre)
     }
   }, [setGenre, userQuery])

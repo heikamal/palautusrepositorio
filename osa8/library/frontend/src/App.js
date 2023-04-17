@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
-import { useApolloClient, useQuery } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import LoginForm from './components/LoginForm'
-import { INIT_DATA } from './queries'
+import { BOOK_ADDED, INIT_DATA } from './queries'
 import Recommend from './components/Recommend'
 
 const App = () => {
@@ -16,6 +16,13 @@ const App = () => {
 
   
   const result = useQuery(INIT_DATA)
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const bok = data.data.bookAdded
+      window.alert(`${bok.title} (${bok.published}) by ${bok.author.name} had been added`)
+    }
+  })
 
   useEffect(() => {
     if ( result.data ){
