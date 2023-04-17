@@ -12,6 +12,7 @@ const App = () => {
   const [authors, setAuthors] = useState([])
   const [books, setBooks] = useState([])
   const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
   const client = useApolloClient()
 
   
@@ -80,7 +81,7 @@ const App = () => {
 
       <Recommend show={page === 'recommend'} books={books} />
 
-      <LoginForm show={page === 'login'} setToken={setToken} setPage={setPage} />
+      <LoginForm show={page === 'login'} setToken={setToken} setPage={setPage} setUser={setUser} />
     </div>
   )
 }
