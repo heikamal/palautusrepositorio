@@ -6,7 +6,7 @@ const Recommend = (props) => {
   const userQuery = useQuery(USER)
   const [genre, setGenre] = useState(null)
   const [books, setBooks] = useState([])
-  const [booksQuery, { booksloading, error, booksdata }] =
+  const [booksQuery] =
     useLazyQuery(ALL_BOOKS)
     
   useEffect(() => {
