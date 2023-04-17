@@ -13,7 +13,7 @@ interface ExerciseArguments {
 	hours: Array<number>
 }
 
-const calculateExercises = (hours: Array<number>, goal: number): ReturnStats => {
+export const calculateExercises = (hours: Array<number>, goal: number): ReturnStats => {
 	const periodLength = hours.length
 	const trainingDays = hours.filter(a => a > 0).length
 
