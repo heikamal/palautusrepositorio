@@ -21,6 +21,7 @@ const App = () => {
     onData: ({ data }) => {
       const bok = data.data.bookAdded
       window.alert(`${bok.title} (${bok.published}) by ${bok.author.name} had been added`)
+      addBook(bok)
     }
   })
 

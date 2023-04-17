@@ -23,8 +23,7 @@ const NewBook = (props) => {
     event.preventDefault()
 
     // kutsu mutaatiota
-    const result =  await createBook({ variables: { title, author, published: parseInt(published), genres } })
-    props.addBook(result.data.addBook)
+    await createBook({ variables: { title, author, published: parseInt(published), genres } })
 
     setTitle('')
     setPublished('')
