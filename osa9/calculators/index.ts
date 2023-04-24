@@ -1,7 +1,10 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import { calculateBmi } from './bmiCalculator';
 import { calculateExercises } from './exerciseCalculator';
 const app = express();
+
+app.use(bodyParser.json());
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
@@ -20,13 +23,21 @@ app.get('/bmi', (req, res) => {
 });
 
 app.post('/exercises', (req, res) => {
-  const dailyExer = req.body.daily_exercises
-  const target = req.body.target
-  if (!target && !dailyExer){
-    res.status(400).json({ error: 'parameters missing' })
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { daily_exercises, target } = req.body;
+
+  // varmistetaan parametrien olemassaolo
+  if (!target || !daily_exercises ){
+    res.status(400).json({ error: 'parameters missing' });
   }
 
-  res.status(200).json(calculateExercises(dailyExer, target))
+  // varmistetaan parametrien tyypit
+  if ( isNaN(Number(target)) || !Array.isArray(daily_exercises)){
+    res.status(400).json({ error: 'malformatted parameters' });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  res.status(200).json(calculateExercises(daily_exercises, target));
 });
 
 const PORT = 3002;
