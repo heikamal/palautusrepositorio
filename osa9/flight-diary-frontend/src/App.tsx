@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Diary } from "./types";
+import axios from "axios";
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([
     {
       "id": 1,
-      "date": "2017-01-01",
+      "date": "JOS NÄET TÄMÄN, JOKIN MENI PIELEEN",
       "weather": "rainy",
       "visibility": "poor"
     },
@@ -27,6 +28,13 @@ const App = () => {
       "visibility": "good"
     }
   ]);
+
+  useEffect(() => {
+    // TODO: Laita backendiin Cors
+    axios.get<Diary[]>('http://localhost:3000/api/diaries').then(response  => {
+      setDiaries(response.data)
+    })
+  })
 
   return (
     <div>
