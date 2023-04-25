@@ -5,6 +5,6 @@ Content-Type: application/json
     "name": "Hagrid",
     "dateOfBirth": "1950-07-13",
 	"ssn": "130750-666S",
-	"gender": "hagrid",
+	"gender": "male",
 	"occupation": "arsonist"
 }
