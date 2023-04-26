@@ -1,12 +1,13 @@
 import { useParams } from 'react-router-dom';
-import { Patient } from '../../types'
+import { Diagnosis, Patient } from '../../types'
 import { useEffect, useState } from 'react';
 import patientService from '../../services/patients'
 
 interface Props {
+	diagnoses: Diagnosis[]
 }
 
-const PatientInfo = (props: Props) => {
+const PatientInfo = ({ diagnoses }: Props) => {
 	const [patient, setPatient] = useState<Patient>()
 	const id = String(useParams().id);
 
@@ -32,7 +33,7 @@ const PatientInfo = (props: Props) => {
 				{patient.entries?.map(entry => <li key={entry.id}>
 					{entry.date} {entry.description} 
 					<ul>{entry.diagnosisCodes?.map(code => <li key={entry.diagnosisCodes?.indexOf(code)}>
-						{code}</li>)}
+						{code} {diagnoses.find(d => d.code === code)?.name}</li>)}
 					</ul>
 				</li>)}
 			</ul>
