@@ -4,12 +4,13 @@ import { v1 as uuid } from 'uuid';
 
 
 const getDiscreetPatients = (): DiscreetPatient[] => {
-	return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+	return patientData.map(({ id, name, dateOfBirth, gender, occupation, entries }) => ({
 		id,
 		name,
 		dateOfBirth,
 		gender,
-		occupation
+		occupation,
+		entries
 	}));
 };
 
@@ -17,10 +18,10 @@ const addPatient = ( patient: NewPatient ): Patient => {
 	const newPatient = {
 		id: uuid(),
 		...patient
-	}
-	patientData.push(newPatient)
+	};
+	patientData.push(newPatient);
 	return newPatient;
-}
+};
 
 export default {
 	getDiscreetPatients,
