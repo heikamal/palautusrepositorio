@@ -14,6 +14,18 @@ const getDiscreetPatients = (): DiscreetPatient[] => {
 	}));
 };
 
+const getAllPatiens = (): Patient[] => {
+	return patientData.map(({ id, name, dateOfBirth, ssn, gender, occupation, entries }) => ({
+		id,
+		name,
+		dateOfBirth,
+		ssn,
+		gender,
+		occupation,
+		entries
+	}));
+};
+
 const addPatient = ( patient: NewPatient ): Patient => {
 	const newPatient = {
 		id: uuid(),
@@ -25,5 +37,6 @@ const addPatient = ( patient: NewPatient ): Patient => {
 
 export default {
 	getDiscreetPatients,
-	addPatient
+	addPatient,
+	getAllPatiens
 };

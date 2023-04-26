@@ -24,8 +24,8 @@ router.post('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
 	const id = req.params.id;
-	const patients = patientService.getDiscreetPatients();
-	res.send(patients.filter(patient => patient.id.toString() === id.toString())[0]);
+	const patients = patientService.getAllPatiens();
+	res.send(patients.find(patient => patient.id.toString() === id.toString()));
 });
 
 export default router;
