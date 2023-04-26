@@ -46,10 +46,19 @@ const DiaryForm = (props: DiaryFormProps) => {
 			<h3>Add new entry</h3>
 			{errorMessage !== '' && <p style={{ color: "#FF0000" }}>{errorMessage}</p>}
 			<form onSubmit={addFormHandler}>
-				date <input type="text" value={date} onChange={(event) => setDate(event.currentTarget.value)}></input><br/>
-				visibility <input type="text" value={visibility} onChange={(event) => setVisibility(event.currentTarget.value)}></input><br/>
-				weather <input type="text" value={weather} onChange={(event) => setWeather(event.currentTarget.value)}></input><br/>
-				comment <input type="text" value={comment} onChange={(event) => setComment(event.currentTarget.value)}></input><br/>
+				date <input type="date" value={date} onChange={(event) => setDate(event.target.value)}></input><br/>
+				visibility:
+					great <input type="radio" name="visibility" value="great" onChange={(e) => setVisibility(e.target.value)} />
+					good <input type="radio" name="visibility" value="good" onChange={(e) => setVisibility(e.target.value)} />
+					ok <input type="radio" name="visibility" value="ok" onChange={(e) => setVisibility(e.target.value)} />
+					poor <input type="radio" name="visibility" value="poor" onChange={(e) => setVisibility(e.target.value)} /><br/>
+				weather:
+					sunny <input type="radio" name="weather" value="sunny" onChange={(event) => setWeather(event.target.value)} />
+					rainy <input type="radio" name="weather" value="rainy" onChange={(event) => setWeather(event.target.value)} />
+					cloudy <input type="radio" name="weather" value="cloudy" onChange={(event) => setWeather(event.target.value)} />
+					stormy <input type="radio" name="weather" value="stormy" onChange={(event) => setWeather(event.target.value)} />
+					windy <input type="radio" name="weather" value="windy" onChange={(event) => setWeather(event.target.value)} /><br/>
+				comment <input type="text" value={comment} onChange={(event) => setComment(event.target.value)}></input><br/>
 				<button type="submit">add</button>
 			</form>
 		</div>
