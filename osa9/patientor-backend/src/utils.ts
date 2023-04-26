@@ -1,4 +1,4 @@
-import { Gender, NewPatient } from "./types";
+import { Diagnosis, Discharge, Gender, HealthCheckRating, NewEntry, NewPatient, SickLeave } from "./types";
 
 const toNewPatient = (object: unknown): NewPatient => {
     console.log(object);
@@ -19,6 +19,101 @@ const toNewPatient = (object: unknown): NewPatient => {
     }
 
     throw new Error('Incorrect data: some fields are missing');
+};
+
+export const toNewEntry = (object: unknown): NewEntry => {
+    console.log(object);
+    if ( !object || typeof object !== 'object' ) {
+        throw new Error('Incorrect or missing data');
+    }
+    if ('type' in object){
+        switch (object.type) {
+            case "HealthCheck":
+                return toNewHealthCheckEntry(object);
+            case "Hospital":
+                return toNewHospitalEntry(object);
+            case "OccupationalHealthcare":
+                return toNewOccupationalHealthcareEntry(object);
+            default:
+                throw new Error('Invalid type!');
+        }
+    }
+	throw new Error('Incorrect data: some fields are missing');
+};
+
+const toNewHealthCheckEntry = (object: unknown): NewEntry => {
+    if ()
+};
+const toNewHospitalEntry = (object: unknown): NewEntry => {};
+const toNewOccupationalHealthcareEntry = (object: unknown): NewEntry => {};
+
+const parseDescription = (description: unknown): string => {
+	if (!isString(description)) {
+        throw new Error('Incorrect description');
+    }
+    return description;
+};
+
+const parseDate = (date: unknown): string => {
+    if (!isString(date) || !isDate(date)) {
+        throw new Error('Incorrect date');
+    }
+    return date;
+};
+
+const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> =>  {
+    if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
+      return [] as Array<Diagnosis['code']>;
+    }
+  
+    return object.diagnosisCodes as Array<Diagnosis['code']>;
+};
+
+const parseHealthCheckRating = (object: unknown): number => {
+    if (!isNumber(object) || !isHealthCheckRating(object)){
+        throw new Error('Incorrect healthcheck rating');
+    }
+    return object;
+};
+
+
+const parseDischarge = (object: unknown): Discharge => {
+    if (!object || typeof object !== 'object') {
+        throw new Error('Incorrect discharge');
+    }
+
+    if ('date' in object && 'criteria' in object) {
+        const newDischarge: Discharge = {
+            date: parseDate(object.date),
+            criteria: parseCriteria(object.criteria),
+        };
+        return newDischarge;
+    }
+
+    throw new Error('Incorrect criteria: some fields are missing');
+};
+
+const parseSickLeave = (object: unknown): SickLeave => {
+    if (!object || typeof object !== 'object') {
+        throw new Error('Incorrect sick leave');
+    }
+
+    if ('startDate' in object && 'endDate' in object) {
+        const newSickLeave: SickLeave = {
+            startDate: parseDate(object.startDate),
+            endDate: parseDate(object.endDate),
+        };
+        return newSickLeave;
+    }
+
+    throw new Error('Incorrect sick leave: some fields are missing');
+};
+
+const parseCriteria = (criteria: unknown): string => {
+    if (!isString(criteria)){
+        throw new Error('Incorrect criteria');
+    }
+    return criteria;
 };
 
 const parseName = (name: unknown): string => {
@@ -42,7 +137,6 @@ const parseSsn = (ssn: unknown): string => {
     return ssn;
 };
 
-// TODO: enum
 const parseGender = (gender: unknown): string => {
     if (!isString(gender) || !isGender(gender)) {
         throw new Error('Incorrect gender');
@@ -69,4 +163,12 @@ const isGender = (param: string): param is Gender => {
     return Object.values(Gender).map(v => v.toString()).includes(param);
 };
 
-export default toNewPatient;
+const isNumber = (numeral: unknown): numeral is number => {
+    return typeof numeral === 'number' || numeral instanceof Number;
+};
+
+const isHealthCheckRating = (rating: unknown): rating is HealthCheckRating => {
+    return Object.values(HealthCheckRating).map(v => v).includes(Number(rating));
+};
+
+export default { toNewPatient, toNewEntry };
