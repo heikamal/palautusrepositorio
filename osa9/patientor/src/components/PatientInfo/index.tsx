@@ -26,6 +26,17 @@ const PatientInfo = (props: Props) => {
 			<p>gender: {patient.gender}<br/>
 			ssn: {patient.ssn}<br/>
 			occupation: {patient.occupation}</p>
+
+			<h3>entries</h3>
+			<ul style={{ listStyle: "none", padding: 0 }}>
+				{patient.entries?.map(entry => <li key={entry.id}>
+					{entry.date} {entry.description} 
+					<ul>{entry.diagnosisCodes?.map(code => <li key={entry.diagnosisCodes?.indexOf(code)}>
+						{code}</li>)}
+					</ul>
+				</li>)}
+			</ul>
+
 		</div>
 	)
 }
