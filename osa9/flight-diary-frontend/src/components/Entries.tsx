@@ -14,7 +14,7 @@ const Entries = (props: EntriesProps) => {
 				<h3>{diary.date}</h3>
 				visibility: {diary.visibility}<br/>
 				weather: {diary.weather}<br/>
-				<i>{diary.comment}</i>
+				{diary.comment && <i>{diary.comment}</i>}
 				</li>)}
 			</ul>
 		</div>
