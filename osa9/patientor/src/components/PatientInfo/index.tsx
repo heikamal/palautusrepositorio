@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { Diagnosis, Entry, Gender, HealthCheckEntry, HealthCheckRating, HospitalEntry, OccupationalHealthcareEntry, Patient } from '../../types'
-import { useEffect, useState } from 'react';
+import { Diagnosis, Entry, Gender, HealthCheckEntry, HealthCheckRating, HospitalEntry, NewEntry, OccupationalHealthcareEntry, Patient } from '../../types'
+import React, { useEffect, useState } from 'react';
 import patientService from '../../services/patients'
 
 import BedIcon from '@mui/icons-material/Bed';
@@ -12,6 +12,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import StarIcon from '@mui/icons-material/Star';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import AddEntryForm from './AddEntryForm';
 
 interface Props {
 	diagnoses: Diagnosis[]
@@ -19,6 +20,8 @@ interface Props {
 
 const PatientInfo = ({ diagnoses }: Props) => {
 	const [patient, setPatient] = useState<Patient>()
+	
+
 	const id = String(useParams().id);
 
 	useEffect(() => {
@@ -31,13 +34,28 @@ const PatientInfo = ({ diagnoses }: Props) => {
 
 	if (!patient) {return <p>loading...</p>}
 
+	const submitNewEntry = async (entry: NewEntry) => {
+		console.log(entry);
+		try {
+			const patient = await patientService.addEntry(id, entry);
+			console.log(patient);
+			console.log('lisätty!');
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	return (
 		<div>
 			<h2>{patient.name} {genderIcon(patient.gender)}</h2>
 			<p>ssn: {patient.ssn}<br/>
 			occupation: {patient.occupation}</p>
 
-			<h3>entries</h3>
+			<AddEntryForm
+			onSubmit={submitNewEntry}
+			/><br/>
+
+			<br/><h3>entries</h3>
 			<ul style={{ listStyle: "none", padding: 0 }}>
 				{patient.entries?.map(entry => <EntryDetails key={entry.id} entry={entry}/>)}
 			</ul>
