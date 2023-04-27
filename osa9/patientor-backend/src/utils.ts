@@ -1,4 +1,4 @@
-import { Diagnosis, Discharge, Gender, HealthCheckRating, NewEntry, NewPatient, SickLeave } from "./types";
+import { Diagnosis, Discharge, Gender, HealthCheckRating, NewBaseEntry, NewEntry, NewPatient, SickLeave } from "./types";
 
 const toNewPatient = (object: unknown): NewPatient => {
     console.log(object);
@@ -26,26 +26,65 @@ export const toNewEntry = (object: unknown): NewEntry => {
     if ( !object || typeof object !== 'object' ) {
         throw new Error('Incorrect or missing data');
     }
-    if ('type' in object){
-        switch (object.type) {
+    if ('type' in object && 'description' in object && 'date' in object && 'specialist' in object && 'diagnosisCodes' in object){
+        const baseEntry: NewBaseEntry = {
+            description: parseDescription(object.description),
+            date: parseDate(object.date),
+            specialist: parseName(object.specialist),
+            diagnosisCodes: parseDiagnosisCodes(object),
+        }
+        
+
+        const type: string = parseType(object.type);
+
+        switch (type) {
             case "HealthCheck":
-                return toNewHealthCheckEntry(object);
+                return toNewHealthCheckEntry(baseEntry, object);
             case "Hospital":
-                return toNewHospitalEntry(object);
+                return toNewHospitalEntry(baseEntry, object);
             case "OccupationalHealthcare":
-                return toNewOccupationalHealthcareEntry(object);
+                return toNewOccupationalHealthcareEntry(baseEntry, object);
             default:
                 throw new Error('Invalid type!');
         }
     }
-	throw new Error('Incorrect data: some fields are missing');
+	throw new Error('Missing type');
 };
 
-const toNewHealthCheckEntry = (object: unknown): NewEntry => {
-    if ()
+const toNewHealthCheckEntry = (baseEntry: NewBaseEntry, object: object): NewEntry => {
+    if ('healthCheckRating' in object) {
+        const newHealthCheckEntry: NewEntry = {
+            type: 'HealthCheck',
+            healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
+            ...baseEntry
+        };
+        return newHealthCheckEntry;
+    }
+    throw new Error('Incorrect data: some fields are missing');
 };
-const toNewHospitalEntry = (object: unknown): NewEntry => {};
-const toNewOccupationalHealthcareEntry = (object: unknown): NewEntry => {};
+const toNewHospitalEntry = (baseEntry: NewBaseEntry, object: object): NewEntry => {
+    if ('discharge' in object) {
+        const newHospitalEntry: NewEntry = {
+            type: 'Hospital',
+            discharge: parseDischarge(object.discharge),
+            ...baseEntry,
+        };
+        return newHospitalEntry;
+    }
+    throw new Error('Incorrect data: some fields are missing');
+};
+const toNewOccupationalHealthcareEntry = (baseEntry: NewBaseEntry, object: object): NewEntry => {
+    if ('employerName' in object && 'sickLeave' in object) {
+        const newOccupationalHealthcareEntry: NewEntry = {
+            type: 'OccupationalHealthcare',
+            employerName: parseName(object.employerName),
+            sickLeave: parseSickLeave(object.sickLeave),
+            ...baseEntry,
+        };
+        return newOccupationalHealthcareEntry;
+    }
+    throw new Error('Incorrect data: some fields are missing');
+};
 
 const parseDescription = (description: unknown): string => {
 	if (!isString(description)) {
@@ -62,6 +101,7 @@ const parseDate = (date: unknown): string => {
 };
 
 const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> =>  {
+
     if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
       return [] as Array<Diagnosis['code']>;
     }
@@ -114,6 +154,13 @@ const parseCriteria = (criteria: unknown): string => {
         throw new Error('Incorrect criteria');
     }
     return criteria;
+};
+
+const parseType = (type: unknown): string => {
+    if (!isString(type)) {
+        throw new Error('Incorrect type');
+    }
+    return type;
 };
 
 const parseName = (name: unknown): string => {
