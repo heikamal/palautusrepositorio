@@ -13,6 +13,8 @@ import FemaleIcon from '@mui/icons-material/Female';
 import StarIcon from '@mui/icons-material/Star';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import AddEntryForm from './AddEntryForm';
+import { Alert } from '@mui/material';
+import axios from 'axios';
 
 interface Props {
 	diagnoses: Diagnosis[]
@@ -20,6 +22,7 @@ interface Props {
 
 const PatientInfo = ({ diagnoses }: Props) => {
 	const [patient, setPatient] = useState<Patient>()
+	const [errorMessage, setErrorMessage] = useState<string>('');
 	
 
 	const id = String(useParams().id);
@@ -38,18 +41,35 @@ const PatientInfo = ({ diagnoses }: Props) => {
 		console.log(entry);
 		try {
 			const patient = await patientService.addEntry(id, entry);
-			console.log(patient);
-			console.log('lisätty!');
-		} catch (error) {
-			console.log(error);
+			setPatient(patient)
+		} catch (e: unknown) {
+			if (axios.isAxiosError(e)) {
+			  if (e?.response?.data && typeof e?.response?.data === "string") {
+				const message = e.response.data.replace('Something went wrong. Error: ', '');
+				console.error(message);
+				showError(message);
+			  } else {
+				showError("Unrecognized axios error");
+			  }
+			} else {
+			  console.error("Unknown error", e);
+			  showError("Unknown error");
+			}
 		}
-	}
+	};
+
+	const showError = (message: string) => {
+		setErrorMessage(message);
+		setTimeout(() => setErrorMessage(''), 5000);
+	};
 
 	return (
 		<div>
 			<h2>{patient.name} {genderIcon(patient.gender)}</h2>
 			<p>ssn: {patient.ssn}<br/>
 			occupation: {patient.occupation}</p>
+
+			{errorMessage !== '' && <Alert severity="error">{errorMessage}</Alert>}
 
 			<AddEntryForm
 			onSubmit={submitNewEntry}
