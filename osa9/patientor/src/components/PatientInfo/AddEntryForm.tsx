@@ -1,15 +1,17 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
-import { NewEntry } from "../../types"
+import { Diagnosis, NewEntry } from "../../types"
 import HealthCheckForm from "./Forms/HealthCheckForm";
 import HospitalForm from "./Forms/HospitalForm";
 import OccupationalForm from "./Forms/OccupationalForm";
+import diagnoses from "../../services/diagnoses";
 
 interface Props {
     onSubmit: (entry: NewEntry) => void;
+    diagnoses: Diagnosis[];
 }
 
-const AddEntryForm = ({ onSubmit }: Props) => {
+const AddEntryForm = ({ onSubmit, diagnoses }: Props) => {
     const [formToShow, setFormToShow] = useState<string>('');
     const formStyle = {
         marginBottom: 45, 
@@ -23,7 +25,9 @@ const AddEntryForm = ({ onSubmit }: Props) => {
                 <HealthCheckForm 
                 onSubmit={onSubmit}
                 setShow={setFormToShow}
-                formStyle={formStyle}/>
+                formStyle={formStyle}
+                diagnoses={diagnoses}
+                />
             );
         case 'Hospital':
             return (
@@ -31,6 +35,7 @@ const AddEntryForm = ({ onSubmit }: Props) => {
                 onSubmit={onSubmit}
                 setShow={setFormToShow}
                 formStyle={formStyle}
+                diagnoses={diagnoses}
                 />
             );
         case 'Occupational':
@@ -39,6 +44,7 @@ const AddEntryForm = ({ onSubmit }: Props) => {
                 onSubmit={onSubmit}
                 setShow={setFormToShow}
                 formStyle={formStyle}
+                diagnoses={diagnoses}
                 />
             );
     

@@ -21,7 +21,7 @@ interface Props {
 }
 
 const PatientInfo = ({ diagnoses }: Props) => {
-	const [patient, setPatient] = useState<Patient>()
+	const [patient, setPatient] = useState<Patient>();
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	
 
@@ -73,6 +73,7 @@ const PatientInfo = ({ diagnoses }: Props) => {
 
 			<AddEntryForm
 			onSubmit={submitNewEntry}
+			diagnoses={diagnoses}
 			/><br/>
 
 			<br/><h3>entries</h3>
